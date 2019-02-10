@@ -8,10 +8,10 @@
         "sourceMap": true,
         "target": "es2018",
         "rootDir": "src",
-        "outDir": "lib"
+        "outDir": "lib",
+        "types": ["node"]
     },
     "files": [
-        "src/index.ts",
-        "src/CommandTypes/LockScreen.ts"
+        "src/index.ts"
     ]
 }
