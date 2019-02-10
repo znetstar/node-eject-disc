@@ -1,9 +1,5 @@
 import { spawn, ChildProcess } from "child_process";
-import * as _fs from "fs";
-import { join, sep } from "path";
-import { tmpdir } from "os";
-
-const fs = _fs.promises;
+const winEject = require('win-eject');
 
 export class UnsupportedPlatform extends Error {
     constructor() {
@@ -47,52 +43,42 @@ export default class EjectDisc {
     /**
      * Ejects an optical disc on MacOS.
      */
-    public static async ejectMacOS() {
-        return await processCommand(spawn("drutil", ["tray", "eject"]));
+    public static async ejectMacOS(drive: string) {
+        return await processCommand(spawn("drutil", ["tray", "eject", drive]));
     }
 
     /**
      * Ejects an optical disc on Windows.
      */
-    public static async ejectWindows() {
-        /**
-         * Script taken from https://bit.ly/2Bj6nIh
-         */
-        const script = `
-            Set oWMP = CreateObject("WMPlayer.OCX.7")
-            Set colCDROMs = oWMP.cdromCollection
-            For i = 0 to colCDROMs.Count-1
-            colCDROMs.Item(i).Eject
-            next
-            oWMP.close 
-        `;
+    public static async ejectWindows(drive: string) {
+        return new Promise((resolve, reject) => {
+            const fn = (err: Error) => {
+                if (err) reject(err);
+                else resolve();
+            }
 
-        const dir = await fs.mkdtemp(`${tmpdir}${sep}`);
-        const ejectScript = join(dir, "eject.vbs");
-        await fs.writeFile(ejectScript, script);
-        
-        await processCommand(spawn("cscript", [ ejectScript ]));
-        await fs.unlink(ejectScript);
+            winEject.eject.apply(winEject, [ drive, fn ].filter(Boolean));
+        });
     }
 
     /**
      * Ejects an optical disc on Linux.
      */
-    public static async ejectLinux() {
-        return await processCommand(spawn("eject"));
+    public static async ejectLinux(drive: string) {
+        return await processCommand(spawn("eject", [ drive ]));
     }
 
     /**
      * Ejects an optical disc.
      */
-    public static async eject() {
+    public static async eject(drive: string) {
        switch (process.platform) {
             case "win32": 
-                return await EjectDisc.ejectWindows();
+                return await EjectDisc.ejectWindows(drive);
             case "darwin": 
-                return await EjectDisc.ejectMacOS();
+                return await EjectDisc.ejectMacOS(drive);
             case "linux": 
-                return await EjectDisc.ejectLinux();
+                return await EjectDisc.ejectLinux(drive);
             default:
                 throw new UnsupportedPlatform();
        }

@@ -1,6 +1,6 @@
 {
   "name": "eject-disc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cross-platform tool to eject an optical disc",
   "main": "lib/index.js",
   "scripts": {
@@ -19,5 +19,7 @@
   },
   "author": "Zachary Boyd <zachary@zacharyboyd.nyc>",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "win-eject": "^1.0.2"
+  }
 }
