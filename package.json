@@ -1,12 +1,13 @@
 {
   "name": "eject-disc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Cross-platform tool to eject an optical disc",
   "main": "lib/index.js",
   "scripts": {
     "build": "grunt build",
     "docs": "grunt docs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "grunt build"
   },
   "devDependencies": {
     "grunt": "^1.0.3",
